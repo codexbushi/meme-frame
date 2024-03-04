@@ -43,8 +43,11 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   const { message } = response
 
+  let inputTextBuffer = message.data.frameActionBody.inputText || []
+  const inputTextString = Buffer.from(inputTextBuffer).toString('utf-8')
+
   const newSearchParams = new URLSearchParams({
-    text: JSON.stringify(message.data.frameActionBody),
+    text: inputTextString,
   })
 
   if (id === 'a') {
