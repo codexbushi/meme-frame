@@ -27,7 +27,7 @@ export async function GET(request: Request) {
           width: '100%',
           height: '100%',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
           alignItems: 'center',
           position: 'relative',
         }}
@@ -38,13 +38,15 @@ export async function GET(request: Request) {
           style={{
             position: 'absolute',
             margin: 0,
-            paddingTop: 450,
+            paddingBottom: 20,
             color: '#ffffff',
-            fontSize: 100,
+            lineHeight: 1,
+            fontSize: 60,
             fontFamily: '"Oswald Bold"',
+            textAlign: 'center',
             textTransform: 'uppercase',
             textShadow:
-              '5px 5px 3px #000, -5px 5px 3px #000, -5px -5px 0 #000, 5px -5px 0 #000',
+              '4px 4px 3px #000, -4px 4px 3px #000, -4px -4px 0 #000, 4px -4px 0 #000',
           }}
         >
           {text}

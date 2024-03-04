@@ -34,6 +34,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
       ],
       image: {
         src: `${process.env.NEXT_PUBLIC_SITE_URL}/meme/b`,
+        aspectRatio: '1:1',
       },
       input: {
         text: 'Text',
