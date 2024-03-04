@@ -6,17 +6,39 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   const { untrustedData } = body
 
+  if (untrustedData.buttonIndex === 1) {
+    return new NextResponse(
+      getFrameHtmlResponse({
+        buttons: [
+          {
+            label: 'Generate',
+          },
+        ],
+        image: {
+          src: `${process.env.NEXT_PUBLIC_SITE_URL}/meme/a`,
+        },
+        input: {
+          text: 'Text',
+        },
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/meme?id=a`,
+      })
+    )
+  }
+
   return new NextResponse(
     getFrameHtmlResponse({
-      image: {
-        src: `${process.env.NEXT_PUBLIC_SITE_URL}/meme/a`,
-      },
       buttons: [
         {
-          label: 'Start Over 🔄',
+          label: 'Generate',
         },
       ],
-      postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/meme`,
+      image: {
+        src: `${process.env.NEXT_PUBLIC_SITE_URL}/meme/b`,
+      },
+      input: {
+        text: 'Text',
+      },
+      postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/meme?id=b`,
     })
   )
 }
