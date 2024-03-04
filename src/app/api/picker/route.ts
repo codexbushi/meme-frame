@@ -20,7 +20,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   if (!isValid) {
     const searchParams = new URLSearchParams({
-      title: 'Invalid Farcaster Id',
+      title: 'Invalid Farcaster User',
     })
 
     return new NextResponse(
@@ -33,7 +33,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         image: {
           src: `${process.env.NEXT_PUBLIC_SITE_URL}/og?${searchParams}`,
         },
-        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/redirect`,
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/redirect`,
       })
     )
   }
