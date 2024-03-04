@@ -44,7 +44,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const { message } = response
 
   const newSearchParams = new URLSearchParams({
-    text: message.data.frameActionBody.inputText,
+    text: JSON.stringify(message.data.frameActionBody),
   })
 
   if (id === 'a') {
