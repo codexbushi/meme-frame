@@ -7,10 +7,45 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   const body: FrameRequest = await req.json()
 
-  const { untrustedData } = body
+  const binaryData = new Uint8Array(
+    body.trustedData.messageBytes
+      .match(/.{1,2}/g)!
+      .map((byte) => parseInt(byte, 16))
+  )
+
+  const response = await fetch('https://hub.pinata.cloud/v1/validateMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: binaryData,
+  }).then((r) => r.json())
+
+  const isValid = response.valid
+
+  if (!isValid) {
+    const searchParams = new URLSearchParams({
+      title: 'Invalid Farcaster Id',
+    })
+
+    return new NextResponse(
+      getFrameHtmlResponse({
+        buttons: [
+          {
+            label: 'Try Again',
+            action: 'post_redirect',
+          },
+        ],
+        image: {
+          src: `${process.env.NEXT_PUBLIC_SITE_URL}/og?${searchParams}`,
+        },
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+      })
+    )
+  }
+
+  const { message } = response
 
   const newSearchParams = new URLSearchParams({
-    text: untrustedData.inputText,
+    text: message.data.frameActionBody.inputText,
   })
 
   if (id === 'a') {
@@ -22,6 +57,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         buttons: [
           {
             label: 'Start Over 🔄',
+            action: 'post_redirect',
           },
         ],
         postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
@@ -38,6 +74,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
       buttons: [
         {
           label: 'Start Over 🔄',
+          action: 'post_redirect',
         },
       ],
       postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,

@@ -38,9 +38,30 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     )
   }
 
-  const { untrustedData } = body
+  if (!isValid) {
+    const searchParams = new URLSearchParams({
+      title: 'Invalid Farcaster Id',
+    })
 
-  if (untrustedData.buttonIndex === 1) {
+    return new NextResponse(
+      getFrameHtmlResponse({
+        buttons: [
+          {
+            label: 'Try Again',
+            action: 'post_redirect',
+          },
+        ],
+        image: {
+          src: `${process.env.NEXT_PUBLIC_SITE_URL}/og?${searchParams}`,
+        },
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+      })
+    )
+  }
+
+  const { message } = response
+
+  if (message.data.frameActionBody.buttonIndex === 1) {
     return new NextResponse(
       getFrameHtmlResponse({
         buttons: [
