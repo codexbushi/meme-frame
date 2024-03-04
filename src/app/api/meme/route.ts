@@ -1,9 +1,5 @@
 import { FrameRequest, getFrameHtmlResponse } from '@coinbase/onchainkit/frame'
-import { Message, getSSLHubRpcClient } from '@farcaster/hub-nodejs'
 import { NextRequest, NextResponse } from 'next/server'
-
-const HUB_URL = 'https://hub-grpc.pinata.cloud'
-const client = HUB_URL ? getSSLHubRpcClient(HUB_URL) : undefined
 
 async function getResponse(req: NextRequest): Promise<NextResponse> {
   const searchParams = req.nextUrl.searchParams
@@ -11,27 +7,23 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   const body: FrameRequest = await req.json()
 
-  let validatedMessage: Message | undefined = undefined
-  try {
-    const frameMessage = Message.decode(
-      Buffer.from(body?.trustedData?.messageBytes || '', 'hex')
-    )
-    const result = await client?.validateMessage(frameMessage)
-    if (result && result.isOk() && result.value.valid) {
-      validatedMessage = result.value.message
-    }
+  const binaryData = new Uint8Array(
+    body.trustedData.messageBytes
+      .match(/.{1,2}/g)!
+      .map((byte) => parseInt(byte, 16))
+  )
 
-    // Also validate the frame url matches the expected url
-    // let urlBuffer = validatedMessage?.data?.frameActionBody?.url || []
-    // const urlString = Buffer.from(urlBuffer).toString('utf-8')
-    // if (validatedMessage && !urlString.startsWith(process.env['HOST'] || '')) {
-    //   return res.status(400).send(`Invalid frame url: ${urlBuffer}`)
-    // }
-  } catch (e) {}
+  const response = await fetch('https://hub.pinata.cloud/v1/validateMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: binaryData,
+  }).then((r) => r.json())
 
-  if (!validatedMessage) {
+  const isValid = response.valid
+
+  if (!isValid) {
     const searchParams = new URLSearchParams({
-      title: 'Invalid Farcaster Id',
+      title: 'Invalid Farcaster User',
     })
 
     return new NextResponse(
@@ -49,11 +41,10 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     )
   }
 
-  let inputTextBuffer = validatedMessage?.data?.frameActionBody?.inputText || []
-  const inputTextString = Buffer.from(inputTextBuffer).toString('utf-8')
+  const { untrustedData } = body
 
   const newSearchParams = new URLSearchParams({
-    text: inputTextString,
+    text: untrustedData.inputText,
   })
 
   if (id === 'a') {
