@@ -31,13 +31,12 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         buttons: [
           {
             label: 'Try Again',
-            action: 'post_redirect',
           },
         ],
         image: {
           src: `${process.env.NEXT_PUBLIC_SITE_URL}/og?${searchParams}`,
         },
-        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/redirect`,
       })
     )
   }
@@ -57,10 +56,9 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         buttons: [
           {
             label: 'Start Over 🔄',
-            action: 'post_redirect',
           },
         ],
-        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/redirect`,
       })
     )
   }
@@ -74,10 +72,9 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
       buttons: [
         {
           label: 'Start Over 🔄',
-          action: 'post_redirect',
         },
       ],
-      postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+      postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/redirect`,
     })
   )
 }

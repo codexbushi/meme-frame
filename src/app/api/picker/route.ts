@@ -33,28 +33,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         image: {
           src: `${process.env.NEXT_PUBLIC_SITE_URL}/og?${searchParams}`,
         },
-        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
-      })
-    )
-  }
-
-  if (!isValid) {
-    const searchParams = new URLSearchParams({
-      title: 'Invalid Farcaster Id',
-    })
-
-    return new NextResponse(
-      getFrameHtmlResponse({
-        buttons: [
-          {
-            label: 'Try Again',
-            action: 'post_redirect',
-          },
-        ],
-        image: {
-          src: `${process.env.NEXT_PUBLIC_SITE_URL}/og?${searchParams}`,
-        },
-        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/redirect`,
       })
     )
   }
